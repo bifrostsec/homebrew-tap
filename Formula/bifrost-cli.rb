@@ -1,4 +1,4 @@
-class Bifrost < Formula
+class BifrostCli < Formula
   desc "Upload SBOM (Software Bill of Materials) files to bifrost"
   homepage "https://bifrostsec.com"
   version "0.2.0"
@@ -27,7 +27,8 @@ class Bifrost < Formula
   end
 
   def install
-    # Each release asset is a single bare binary named bifrost-<os>-<arch>.
+    # Each release asset is a single bare binary named bifrost-<os>-<arch>;
+    # install it as the `bifrost` command.
     bin.install Dir["bifrost-*"].first => "bifrost"
   end
 

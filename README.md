@@ -5,7 +5,7 @@ Homebrew tap for [bifrost](https://bifrostsec.com/) command-line tools.
 ## Install
 
 ```bash
-brew install bifrostsec/tap/bifrost
+brew install bifrostsec/tap/bifrost-cli
 ```
 
 (The `bifrostsec/tap` prefix automatically taps this repository; no separate
@@ -15,7 +15,7 @@ brew install bifrostsec/tap/bifrost
 
 ```bash
 brew update
-brew upgrade bifrost
+brew upgrade bifrost-cli
 ```
 
 ## Why a tap?
@@ -32,7 +32,7 @@ runs without the "Apple could not verify…" warning.
 
 | Formula | Tool |
 | ------- | ---- |
-| `bifrost` | [bifrost-cli](https://github.com/bifrostsec/bifrost-cli) — SBOM uploader |
+| `bifrost-cli` | [bifrost-cli](https://github.com/bifrostsec/bifrost-cli) — SBOM uploader (installs the `bifrost` command) |
 
 This tap is intended to host multiple bifrost tools over time; each lives in its
 own file under `Formula/`.
