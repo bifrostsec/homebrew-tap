@@ -35,4 +35,4 @@ runs without the "Apple could not verify…" warning.
 | `bifrost-cli` | [bifrost-cli](https://github.com/bifrostsec/bifrost-cli) — SBOM uploader (installs the `bifrost` command) |
 
 This tap is intended to host multiple bifrost tools over time; each lives in its
-own file under `Formula/`.
+own Ruby file in this repository (e.g., `bifrost-cli.rb`).
