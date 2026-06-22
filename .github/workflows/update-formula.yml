@@ -1,9 +1,7 @@
 name: Update formula
 
-# Manually triggered. Polls the latest bifrost-cli release and, if the formula is
-# behind, updates the version and sha256 values in the file specified by FORMULA.
-# Uses only the built-in GITHUB_TOKEN (same-repo write) — no cross-repo credentials
-# are needed because the source release is public.
+# Manually triggered. Polls the latest bifrost-cli release and
+# updates the version and sha256 values in the file specified by FORMULA.
 on:
   workflow_dispatch:
 
@@ -70,7 +68,7 @@ jobs:
           # comment; the helper fails loudly if a substitution does not land.
           update_sha() {
             local arch="$1" sum="$2"
-            sed -i -E "s|^( *sha256 )\"[^\"]*\"( # ${arch})\$|\1\"${sum}\"\2|" "$FORMULA"
+            sed -i -E "s|^( *sha256 )\"[^\"]*\"( # ${arch})$|\1\"${sum}\"\2|" "$FORMULA"
             grep -q "\"${sum}\" # ${arch}" "$FORMULA" \
               || { echo "error: failed to set sha256 for ${arch}" >&2; exit 1; }
           }
