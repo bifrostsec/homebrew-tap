@@ -18,16 +18,6 @@ brew update
 brew upgrade bifrost-cli
 ```
 
-## Why a tap?
-
-Installing through Homebrew avoids the macOS Gatekeeper prompt you get when
-downloading the release binary directly with a browser — Homebrew does not
-apply the `com.apple.quarantine` attribute to formula installs, so the binary
-runs without the "Apple could not verify…" warning.
-
-> macOS users who prefer the direct download, and all Windows users, should
-> follow the instructions in the [bifrost-cli README](https://github.com/bifrostsec/bifrost-cli#get-started).
-
 ## Available formulae
 
 | Formula | Tool |
