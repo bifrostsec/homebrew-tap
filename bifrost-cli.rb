@@ -1,4 +1,5 @@
-# The version and sha256 values below are updated automatically by the update-formula workflow
+# This file is automatically updated by the update-formula workflow.
+# DO NOT EDIT.
 class BifrostCli < Formula
   desc "Upload SBOM (Software Bill of Materials) files to bifrost"
   homepage "https://bifrostsec.com"
