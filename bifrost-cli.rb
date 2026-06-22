@@ -28,9 +28,12 @@ class BifrostCli < Formula
   end
 
   def install
-    # Each release asset is a single bare binary named bifrost-<os>-<arch>;
-    # install it as the `bifrost` command.
-    bin.install Dir["bifrost-*"].first => "bifrost"
+    # Each release asset is a single bare binary named bifrost-<os>-<arch>.
+    # Select the one for this platform explicitly so the install is deterministic
+    # and fails clearly if the expected asset is missing.
+    os = OS.mac? ? "darwin" : "linux"
+    arch = Hardware::CPU.arm? ? "arm64" : "amd64"
+    bin.install "bifrost-#{os}-#{arch}" => "bifrost"
   end
 
   test do

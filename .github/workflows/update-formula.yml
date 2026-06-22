@@ -76,6 +76,9 @@ jobs:
           }
 
           sed -i -E "s|^( *version )\"[^\"]*\"|\1\"${VERSION}\"|" "$FORMULA"
+          grep -q "version \"${VERSION}\"" "$FORMULA" \
+            || { echo "error: failed to set version to ${VERSION}" >&2; exit 1; }
+
           update_sha darwin-arm64 "$DARWIN_ARM64"
           update_sha darwin-amd64 "$DARWIN_AMD64"
           update_sha linux-arm64 "$LINUX_ARM64"
