@@ -1,0 +1,96 @@
+name: Update formula
+
+# Manually triggered. Polls the latest bifrost-cli release and, if the formula is
+# behind, updates the version and sha256 values in Formula/bifrost-cli.rb in place.
+# Uses only the built-in GITHUB_TOKEN (same-repo write) — no cross-repo credentials
+# are needed because the source release is public.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SOURCE_REPO: bifrostsec/bifrost-cli
+  FORMULA: bifrost-cli.rb
+
+jobs:
+  update:
+    name: Update bifrost-cli formula
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout tap
+        uses: actions/checkout@v4
+
+      - name: Resolve latest release version
+        id: release
+        run: |
+          tag="$(gh release view --repo "$SOURCE_REPO" --json tagName --jq .tagName)"
+          version="${tag#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "error: unexpected version from $SOURCE_REPO latest release: '$tag'" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Latest $SOURCE_REPO release: v$version"
+
+      - name: Resolve checksums
+        id: sha
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          for arch in darwin-arm64 darwin-amd64 linux-arm64 linux-amd64; do
+            gh release download "v${VERSION}" \
+              --repo "$SOURCE_REPO" \
+              --pattern "bifrost-${arch}" \
+              --dir build
+            sum="$(sha256sum "build/bifrost-${arch}" | cut -d' ' -f1)"
+            echo "${arch//-/_}=${sum}" >> "$GITHUB_OUTPUT"
+            echo "bifrost-${arch}: ${sum}"
+          done
+
+      - name: Update formula
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          DARWIN_ARM64: ${{ steps.sha.outputs.darwin_arm64 }}
+          DARWIN_AMD64: ${{ steps.sha.outputs.darwin_amd64 }}
+          LINUX_ARM64: ${{ steps.sha.outputs.linux_arm64 }}
+          LINUX_AMD64: ${{ steps.sha.outputs.linux_amd64 }}
+        run: |
+          set -euo pipefail
+
+          # The asset URLs use #{version}, so only the version line and the four
+          # sha256 lines change. Each sha256 is anchored by its trailing "# <arch>"
+          # comment; the helper fails loudly if a substitution does not land.
+          update_sha() {
+            local arch="$1" sum="$2"
+            sed -i -E "s|^( *sha256 )\"[^\"]*\"( # ${arch})\$|\1\"${sum}\"\2|" "$FORMULA"
+            grep -q "\"${sum}\" # ${arch}" "$FORMULA" \
+              || { echo "error: failed to set sha256 for ${arch}" >&2; exit 1; }
+          }
+
+          sed -i -E "s|^( *version )\"[^\"]*\"|\1\"${VERSION}\"|" "$FORMULA"
+          update_sha darwin-arm64 "$DARWIN_ARM64"
+          update_sha darwin-amd64 "$DARWIN_AMD64"
+          update_sha linux-arm64 "$LINUX_ARM64"
+          update_sha linux-amd64 "$LINUX_AMD64"
+
+          ruby -c "$FORMULA"
+
+      - name: Commit if changed
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FORMULA"
+          if git diff --cached --quiet; then
+            echo "Formula already up to date for v${VERSION}"
+            exit 0
+          fi
+          git commit -m "chore: update bifrost-cli to v${VERSION}"
+          git push
