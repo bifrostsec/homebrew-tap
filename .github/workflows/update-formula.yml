@@ -28,23 +28,25 @@ jobs:
         id: release
         run: |
           tag="$(gh release view --repo "$SOURCE_REPO" --json tagName --jq .tagName)"
-          version="${tag#v}"
-          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "error: unexpected version from $SOURCE_REPO latest release: '$tag'" >&2
+          # Require the full vX.Y.Z tag: the asset URLs and download below assume
+          # the leading "v", so fail loudly if upstream ever drops it.
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "error: unexpected tag from $SOURCE_REPO latest release: '$tag' (expected vX.Y.Z)" >&2
             exit 1
           fi
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "Latest $SOURCE_REPO release: v$version"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "Latest $SOURCE_REPO release: $tag"
 
       - name: Resolve checksums
         id: sha
         env:
-          VERSION: ${{ steps.release.outputs.version }}
+          TAG: ${{ steps.release.outputs.tag }}
         run: |
           set -euo pipefail
           mkdir -p build
           for arch in darwin-arm64 darwin-amd64 linux-arm64 linux-amd64; do
-            gh release download "v${VERSION}" \
+            gh release download "$TAG" \
               --repo "$SOURCE_REPO" \
               --pattern "bifrost-${arch}" \
               --dir build
