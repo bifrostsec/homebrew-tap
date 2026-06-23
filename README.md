@@ -26,3 +26,18 @@ brew upgrade bifrost-cli
 
 This tap is intended to host multiple bifrost tools over time; each lives in its
 own Ruby file in this repository (e.g., `bifrost-cli.rb`).
+
+## Test a local checkout
+
+To test formula changes from a local checkout, point the tap at the repository,
+trust the formula, and install it:
+
+```bash
+brew tap bifrostsec/tap /absolute/path/to/homebrew-tap
+brew trust --formula bifrostsec/tap/bifrost-cli
+brew install bifrostsec/tap/bifrost-cli
+bifrost help
+```
+
+If `bifrostsec/tap` is already tapped from GitHub, run
+`brew untap bifrostsec/tap` first.
