@@ -3,28 +3,28 @@
 class BifrostCli < Formula
   desc "Upload SBOM (Software Bill of Materials) files to bifrost"
   homepage "https://bifrostsec.com"
-  version "0.2.0"
+  version "0.2.1"
   license "Apache-2.0"
 
   on_macos do
     on_arm do
       url "https://github.com/bifrostsec/bifrost-cli/releases/download/v#{version}/bifrost-darwin-arm64"
-      sha256 "c1b4245754892a0ab5454b42ee23aa8155bf9edd1199f74b22783083e081d626" # darwin-arm64
+      sha256 "f58def0f31d2388ec61217d2352cccfcf59ba95cb35c5249f688e78658914fb0" # darwin-arm64
     end
     on_intel do
       url "https://github.com/bifrostsec/bifrost-cli/releases/download/v#{version}/bifrost-darwin-amd64"
-      sha256 "f66714360ff3dfba26844874d32c96c3fb264b2e8d6c2f0d3ccb195178868439" # darwin-amd64
+      sha256 "112a788b5bfef7c288453461769d8731fba69ef0271ca03a734d8ae03bba4310" # darwin-amd64
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/bifrostsec/bifrost-cli/releases/download/v#{version}/bifrost-linux-arm64"
-      sha256 "8de27c9e9d440bf7869c3d559d57b4ae17487b14ecce6cdcd9e3e0d07b46003c" # linux-arm64
+      sha256 "cf4cf543af9f0e075ad064e6d8354dc4ff57b214fa93136495d68a75915879af" # linux-arm64
     end
     on_intel do
       url "https://github.com/bifrostsec/bifrost-cli/releases/download/v#{version}/bifrost-linux-amd64"
-      sha256 "cf31d0de9a828267560bcb691cf162f36411f326d1d6b3562fe67bc038276a6b" # linux-amd64
+      sha256 "18b1237f8b6f17325f0a9a04f8438fee3033e8d48eebc475bb5a54bcad1f5038" # linux-amd64
     end
   end
 
